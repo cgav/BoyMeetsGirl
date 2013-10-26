@@ -1,9 +1,13 @@
+# ---------------------------------------------------------
 # constants
+# ---------------------------------------------------------
 FACEBOOK_URL = "https://www.facebook.com/"
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.69 Safari/537.36"
 PORT = 31337
 
+# ---------------------------------------------------------
 # imports
+# ---------------------------------------------------------
 cheerio = require('cheerio')
 http = require('http')
 request = require('request')
@@ -11,12 +15,19 @@ fql = require('fql')
 express = require('express')
 mongoose = require('mongoose')
 
+# ---------------------------------------------------------
 # building server
+# ---------------------------------------------------------
 app = express()
+app.use(express.bodyParser())
+app.use(express.static(__dirname));
+
 mongoose.connect('mongodb://localhost/boymeetsgirl')
 db = mongoose.connection;
 
+# ---------------------------------------------------------
 # DB functions
+# ---------------------------------------------------------
 updateUser = null
 
 db.on 'error', (err) ->
@@ -63,9 +74,11 @@ db.on 'open', ->
 			else
 				_createUser userData, callback
 
-# routes
+# ---------------------------------------------------------
+# Web server routes
+# ---------------------------------------------------------
 app.get '/', (req, res) ->
-	res.send('Nothing there, yet')
+	res.sendfile('index.html')
 
 app.get '/checkin/:fid', (req, res) ->
 	request
@@ -109,5 +122,7 @@ app.get '/checkin/:fid', (req, res) ->
 				# returning result
 				res.send(pages);
 
+# ---------------------------------------------------------
 # start server
+# ---------------------------------------------------------
 app.listen(PORT)

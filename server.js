@@ -20,6 +20,10 @@ mongoose = require('mongoose');
 
 app = express();
 
+app.use(express.bodyParser());
+
+app.use(express["static"](__dirname));
+
 mongoose.connect('mongodb://localhost/boymeetsgirl');
 
 db = mongoose.connection;
@@ -81,7 +85,7 @@ db.on('open', function() {
 });
 
 app.get('/', function(req, res) {
-  return res.send('Nothing there, yet');
+  return res.sendfile('index.html');
 });
 
 app.get('/checkin/:fid', function(req, res) {
