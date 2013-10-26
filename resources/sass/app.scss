@@ -1,10 +1,177 @@
-// The following two lines import the default Sencha Touch theme. If you are building
-// a new theme, remove them and the add your own CSS on top of the base CSS (which
-// is already included in your app.json file).
 @import 'sencha-touch/default';
 @import 'sencha-touch/default/all';
 
-// Custom code goes here..
+// --------------------------------------------------------
+// Common
+//
 
-// Examples of using the icon mixin:
-// @include icon('user');
+$default-font-size: 32px;
+$base-color: #3498DB;
+$base-pressed-color: #2980b9;
+$border-color: #95a5a6;
+
+body {
+	font-family: 'Yanone Kaffeesatz', sans-serif;
+	font-weight: 100;
+	font-size: $default-font-size !important;
+}
+
+a {
+	color: $base-color;
+	text-decoration: none;
+
+	&:hover {
+		color: $base-pressed-color;
+	}
+}
+
+b {
+	font-weight: 400;
+}
+
+@mixin padded-view() {
+	padding: 20px !important;
+}
+
+.x-field {
+	border: 1px solid $border-color !important;
+	font-size: $default-font-size - 14;
+	margin-bottom: 10px;
+
+	input {
+		padding: 0px 7px;
+	}
+}
+
+.button {
+	background-color: $base-color;
+	height: 45px;
+	font-size: $default-font-size - 8;
+	margin-bottom: 10px;
+
+	.x-button-label {
+		color: #fff;
+		font-weight: 400;
+		padding: 8px 0 9px 0;
+	}
+
+	&.x-button-pressing {
+		background-color: $base-pressed-color;
+	}
+}
+	
+.title-toolbar {
+	background-color: $base-color;
+	font-size: $default-font-size - 4;
+	color: #fff;
+	width: 100%;
+	text-align: center;
+	height: 50px;
+	padding-top: 9px;
+	margin-bottom: 10px;
+}
+
+// --------------------------------------------------------
+// Splash
+//
+
+.splash {
+	@include padded-view();
+	background-color: $base-color;
+	color: #fff;
+
+	.logo {
+		background-image: url(../images/logo.png);
+		background-size: 230px 230px;
+		width: 230px;
+		height: 230px;
+		margin: 50px auto 0 auto;
+	}
+
+	.title {
+		font-size: 48px;
+		width: 100%;
+		text-align: center;
+	}
+
+	.footer {
+		width: 247px;
+		font-size: $default-font-size - 8;
+		text-align: center;
+		margin: 0 auto 20px auto;
+
+		.label {
+			padding-top: 27px;
+			margin-right: 5px;
+			height: 68px;
+		}
+
+		.chaya-logo {
+			background-image: url(../images/cf-logo-inverted.png);
+			width: 150px;
+			height: 68px;
+		}
+	}
+}
+
+// --------------------------------------------------------
+// Sign in
+//
+.signin {
+	background-color: #fff;
+
+	.content {
+		@include padded-view();
+
+		.header {
+
+			font-size: $default-font-size - 8;
+			margin-bottom: 20px;
+
+			.logo {
+				background-image: url(../images/cf-logo.png);
+				background-size: 70px 70px;
+				height: 70px;
+				width: 70px;
+				margin-right: 20px;
+			}
+
+		}
+
+		.footer {
+			font-size: $default-font-size - 12px;
+			text-align: center;
+		}
+	}
+}
+
+// --------------------------------------------------------
+// Sign up
+//
+.signup {
+	background-color: #fff;
+
+	.content {
+		@include padded-view();
+
+		.header {
+
+			font-size: $default-font-size - 8;
+			margin-bottom: 20px;
+
+			.logo {
+				background-image: url(../images/cf-logo.png);
+				background-size: 70px 70px;
+				height: 70px;
+				width: 70px;
+				margin-right: 20px;
+			}
+
+		}
+
+		.footer {
+			font-size: $default-font-size - 12px;
+			text-align: center;
+		}
+	}
+}
