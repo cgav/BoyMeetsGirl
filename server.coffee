@@ -24,7 +24,6 @@ moment = require('moment')
 # ---------------------------------------------------------
 SESSION_ID = '13102705041166251630df196a1e1c5f'
 memberMap = {}
-# memberRef = {}
 visitMap = {}
 recentVisits = {}
 
@@ -55,6 +54,9 @@ db.on 'open', ->
 	userSchema = mongoose.Schema
 		user_id: String
 		fid: String
+		pic: String
+		firstname: String
+		lastname: String
 		pages: [
 			page_id: Number
 			pic: String
@@ -64,14 +66,15 @@ db.on 'open', ->
 
 	User = mongoose.model 'User', userSchema
 
-	getFIDs = (ids) ->
-		fids = []
+	getFIDs = (ids, callback) ->
+		fids = {}
 		User.find {}, (error, users) ->
 			for user in users
 				for id in ids
-					fids.push id if id == user.user_id
+					fids[user.user_id] = user if id == user.user_id
 
-			console.log fids
+			# console.log "Matching facebook IDs:"
+			callback?(fids)
 
 	insertUser = (userData, callback) ->
 		User.findOne
@@ -131,27 +134,6 @@ buildMemberMap = (members) ->
 
 	memberMap
 
-# buildMemberMapByVisits = (visits) ->
-# 	_addToMemberMap = (member) ->
-# 		_iterateVisits = (visit) ->
-# 			if visit.member?
-# 				_addToMemberMap visit.member
-
-# 			if visit.event?.visits?
-# 				for _visit in visit.event.visits.value
-# 					_iterateVisits _visit
-
-# 		if member?.id?
-# 			memberRef[member._id] = member
-# 			memberMap[member.id.value] = member
-
-# 		if member?.visits?
-# 			for _visit in member.visits.value
-# 				_iterateVisits _visit
-
-# 	for id, visit of visits
-# 		_addToMemberMap visit.member
-
 buildVisitMap = (visits) ->
 	visitMap = {}
 
@@ -173,15 +155,32 @@ buildVisitMap = (visits) ->
 	visitMap
 
 getAllVisits = (callback) ->
-	entityType = "com.braintribe.model.club.Visit"
-	url = "#{URL}/entity?accessId=#{ACCESS_ID}&entityType=#{entityType}&accessKind=query&sessionId=#{SESSION_ID}"
 
-	request
-		url: url
-	, (error, response, body) ->
-		visitMap = buildVisitMap(JSON.parse(body))
-		buildMemberMapByVisits(visitMap)
-		callback?(visitMap)
+	getAllMembers (members) ->
+		# ids = (member.id.value for id, member of members)
+		eMails = (member.eMail for id, member of members)
+		# console.log ids
+
+		getFIDs eMails, (users) ->
+			members = []
+			ids = []
+
+			for user_id, user of users
+				member = findMemberByEmail(user_id)
+				ids.push member.id.value
+
+			# ids = (findMemberByEmail(user_id).id.value for user in users)
+			console.log ids
+
+			getAllRecentVisits ids, (visits) ->
+				for _memberId, visit of visits
+					member = memberMap[_memberId]
+					member.checkinTime = moment(visit.checkinTime.value, 'YYYY.MM.DD HH:mm:ss').unix()
+					member.facebook_object = users[member.eMail]
+					member.id = member.id.value
+					members.push member
+
+				callback?(members)
 
 getAllMembers = (callback) ->
 	entityType = "com.braintribe.model.club.Member"
@@ -193,63 +192,46 @@ getAllMembers = (callback) ->
 		memberMap = buildMemberMap(JSON.parse(body))
 		callback?(memberMap)
 
-# getRecentVisits = (members) ->
-# 	visits = {}
-# 	for id, member of members
-# 		if member.surName == "3"
-# 			console.log member
-
-# 		if member.visits?.value?
-# 			for visit in member.visits.value
-# 				if visit.checkinTime?.value?
-# 					timestamp = moment(visit.checkinTime.value, 'YYYY.MM.DD HH:mm:ss').unix()
-# 					if not visits[member.id.value]?
-# 						visits[member.id.value] = visit
-					
-# 					oldTimeStamp = moment(visits[member.id.value], 'YYYY.MM.DD HH:mm:ss').unix()
-
-# 					# overwriting old visit value if timestamp is younger
-# 					if oldTimeStamp <= timestamp
-# 						visit.timestamp = timestamp
-# 						visit.member = member
-# 						visits[member.id.value] = visit
-
-# 					# console.log "#{member.id.value} #{member.foreName} #{member.surName}, #{timestamp}"
-
-# 	recentVisits = visits
-
-getRecentVisits = (visits) ->
-	recentVisits = {}
-
-	for id, visit of visits
-		continue if not visit.member?
-
-		# getting member for visit
-		member = null
-		member = visit.member if visit.member.id?
-		member = memberRef[visit.member._ref] if visit.member._ref?
-
-		if visit.checkinTime?.value?
-			timestamp = moment(visit.checkinTime.value, 'YYYY.MM.DD HH:mm:ss').unix()
-			if not recentVisits[member.id.value]?
-				recentVisits[member.id.value] = visit
-			
-			oldTimeStamp = moment(recentVisits[member.id.value], 'YYYY.MM.DD HH:mm:ss').unix()
-
-			# overwriting old visit value if timestamp is younger
-			if oldTimeStamp <= timestamp
-				visit.timestamp = timestamp
-				# visit.member = member
-				visit.eMail = member.eMail
-				recentVisits[member.id.value] = visit
-
-	recentVisits
-
 findMemberByEmail = (email) ->
 	for id, member of memberMap
 		return member if member.eMail == email
 
 	return null
+
+filterMostRecentVisit = (visits) ->
+	# for visit in visits
+	# 	console.log visit.checkinTime
+
+	return visits[0]
+
+getRecentVisitByMember = (memberId, callback) ->
+	entityType = "com.braintribe.model.club.Member"
+	url = "#{URL}/entity?accessId=#{ACCESS_ID}&entityType=#{entityType}&accessKind=query&queryType=byId&id=#{memberId}&sessionId=#{SESSION_ID}"
+
+	request
+		url: url
+	, (error, reponse, body) ->
+		member = JSON.parse(body)
+		if member?.visits?.value
+			callback?(member.visits.value)
+		else
+			callback?(null)
+
+getAllRecentVisits = (memberIds, callback) ->
+	visits = {}
+
+	_handleNextMember = (memberId, callback) ->
+		if not memberId?
+			callback?(visits)
+			return
+
+		getRecentVisitByMember memberId, (_visits) ->
+			if _visits?
+				visits[memberId] = filterMostRecentVisit(_visits)
+
+			_handleNextMember memberIds.pop(), callback
+
+	_handleNextMember memberIds.pop(), callback
 
 # -----------------------------------------------------------------------------
 app.get '/', (req, res) ->
@@ -304,6 +286,7 @@ app.get '/visits', (req, res) ->
 
 # -----------------------------------------------------------------------------
 app.get '/checkin/:email/:fid', (req, res) ->
+	member = findMemberByEmail(req.params.email)
 	data =
 		_type: "com.braintribe.model.club.Visit"
 		checkinTime:
@@ -311,7 +294,7 @@ app.get '/checkin/:email/:fid', (req, res) ->
 			value: moment().format('YYYY.MM.DD HH:mm:ss')
 		member:
 			_type: "com.braintribe.model.club.Member"
-			id: findMemberByEmail(req.params.email).id.value
+			id: member.id.value
 
 	url = "#{URL}/entity?accessId=#{ACCESS_ID}&accessKind=create&data=#{JSON.stringify(data)}&sessionId=#{SESSION_ID}"
 
@@ -332,9 +315,10 @@ app.get '/checkin/:email/:fid', (req, res) ->
 				return
 
 			# scraping likes/pages from user
-			$ = cheerio.load(body);
+			$ = cheerio.load(body)
 			contents = $(".hidden_elem").contents()
 			names = []
+			pic = ''
 
 			contents.each (index, element) ->
 				links = $(element.data).find(".profileInfoSection a[href!='#']")
@@ -342,6 +326,10 @@ app.get '/checkin/:email/:fid', (req, res) ->
 					url = $(link).attr('href')
 					idName = url.substr(url.lastIndexOf('/') + 1)
 					names.push "'#{idName}'"
+
+				profilePic = $(element.data).find("img.profilePic")
+				if profilePic.length > 0
+					pic = $(profilePic[0]).attr('src')
 
 			# extracting page data via FQL
 			namesStr = names.join(',')
@@ -359,7 +347,11 @@ app.get '/checkin/:email/:fid', (req, res) ->
 				insertUser
 					user_id: req.params.email
 					fid: req.params.fid
+					pic: pic
+					firstname: member.foreName
+					lastname: member.surName
 					pages: pages
+					photos: parseInt(Math.random() * 100)
 				, ->
 					# returning result
 					res.send(pages);
@@ -373,26 +365,36 @@ app.listen(PORT)
 # 	# console.log recentVisits
 # 	# console.log (visit.member.foreName for id, visit of recentVisits)
 
-getAllMembers (members) ->
-	
-	# getRecentVisits(members)
-	# ids = (visit.member.eMail for id, visit of recentVisits when visit.member.eMail?)
-	# # console.log (visit.member.foreName for id, visit of recentVisits)
-	# # console.log ids
-	# getFIDs(ids)
-	# # fql.query "SELECT name FROM user WHERE id IN (#{ids})", (error, users) ->
-	# # 	# error is triggered if no data was returned
-	# # 	if error?
-	# # 		res.send({})
-	# # 		return
+getAllMembers()
+# getAllMembers (members) ->
+# 	# ids = (member.id.value for id, member of members)
+# 	eMails = (member.eMail for id, member of members)
+# 	# console.log ids
 
-	# # 	# preprocessing content
-	# # 	for page in pages
-	# # 		page.categories = (category.name for category in page.categories).join('/')
+# 	getFIDs eMails, (users) ->
+# 		members = []
+# 		ids = []
 
-	# # 	console.log visit.member.id.value
+# 		for user_id, user of users
+# 			member = findMemberByEmail(user_id)
+# 			ids.push member.id.value
 
+# 		# ids = (findMemberByEmail(user_id).id.value for user in users)
+# 		console.log ids
 
+# 		getAllRecentVisits ids, (visits) ->
+# 			for _memberId, visit of visits
+# 				member = memberMap[_memberId]
+# 				member.checkinTime = moment(visit.checkinTime.value, 'YYYY.MM.DD HH:mm:ss').unix()
+# 				member.facebook_object = users[member.eMail]
+# 				members.push member
+
+# 			# for visit in visits
+# 			console.log members
+
+		
+
+# getRecentVisitByMember(46)
 
 
 

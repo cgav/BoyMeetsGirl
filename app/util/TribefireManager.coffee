@@ -54,11 +54,11 @@ Ext.define 'BoyMeetsGirl.util.TribefireManager',
 		FB.login (response) =>
             if response.authResponse
             	FB.api '/me', (response) =>
-            		@data.fid = response.id
+            		@data.fid = response.username
 
             		@checkIn @data.userEmail, @data.fid, (_response) ->
             			console.log _response
-            			callback?(response.id)
+            			callback?(response.username)
             else
                 callback?(null)
     

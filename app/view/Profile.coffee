@@ -35,6 +35,7 @@ Ext.define 'BoyMeetsGirl.view.Profile',
 				cls: 'header'
 				items: [{
 					xtype: 'image'
+					itemId: 'image'
 					src: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
 					cls: 'profile-pic'
 				}, {
@@ -42,10 +43,12 @@ Ext.define 'BoyMeetsGirl.view.Profile',
 					layout: 'vbox'
 					items: [{
 						xtype: 'component'
+						itemId: 'name'
 						cls: 'name'
 						html: 'Julia N.'
 					}, {
 						xtype: 'component'
+						itemId: 'seen'
 						cls: 'seen'
 						html: 'seen <b>30 minutes</b> ago'
 					}, {
@@ -60,6 +63,7 @@ Ext.define 'BoyMeetsGirl.view.Profile',
 				cls: 'links'
 				items: [{
 					xtype: 'button'
+					itemId: 'interests'
 					baseCls: 'profile-button active'
 					html: "
 						<div class='icon heart-red'></div>
@@ -67,6 +71,7 @@ Ext.define 'BoyMeetsGirl.view.Profile',
 					"
 				}, {
 					xtype: 'button'
+					itemId: 'photos'
 					baseCls: 'profile-button'
 					html: "
 						<div class='icon cam-grey'></div>
@@ -80,6 +85,7 @@ Ext.define 'BoyMeetsGirl.view.Profile',
 				items: [{
 					xtype: 'list'
 					cls: 'pages-list'
+					itemId: 'pagesList'
 					pressedCls: 'item-tapped'
 					selectedCls: 'item-tapped'
 					itemTpl: "
@@ -89,24 +95,24 @@ Ext.define 'BoyMeetsGirl.view.Profile',
 							</div>
 							<div class='description'>
 								<div class='name'>{name}</div>
-								<div class='category'>{category}</div>
+								<div class='category'>{categories}</div>
 							</div>
 						</div>
 					"
 					flex: 1
-					data: [{
-						pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
-						name: 'Hardwell'
-						category: 'Musician/Band'
-					}, {
-						pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
-						name: 'Braintribe'
-						category: 'Musician/Band'
-					}, {
-						pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
-						name: 'Pioneers'
-						category: 'Musician/Band'
-					}]
+					# data: [{
+					# 	pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
+					# 	name: 'Hardwell'
+					# 	category: 'Musician/Band'
+					# }, {
+					# 	pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
+					# 	name: 'Braintribe'
+					# 	category: 'Musician/Band'
+					# }, {
+					# 	pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
+					# 	name: 'Pioneers'
+					# 	category: 'Musician/Band'
+					# }]
 				}]
 			}]
 		}]

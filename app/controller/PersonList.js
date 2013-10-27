@@ -13,7 +13,7 @@ Ext.define('BoyMeetsGirl.controller.PersonList', {
     control: {
       personList: {
         itemtap: function(sender, index, target, record) {
-          return this.getApplication().getController('Profile').show();
+          return this.getApplication().getController('Profile').show('left', record);
         }
       },
       backButton: {

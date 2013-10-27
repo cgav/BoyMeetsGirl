@@ -12,13 +12,15 @@ Ext.define 'BoyMeetsGirl.controller.PersonList',
 		control:
 			personList:
 				itemtap: (sender, index, target, record) ->
-					this.getApplication().getController('Profile').show()
+					this.getApplication().getController('Profile').show('left', record)
 
 			backButton:
 				tap: (sender) ->
 					this.getApplication().getController('Home').show('right')
 
 	show: (direction = 'left') ->
+		# store = Ext.getStore('Persons')
+		# this.getPersonList().setStore(store)
 		Ext.Viewport.animateActiveItem this.getView(), 
 			type: 'slide'
 			direction: direction

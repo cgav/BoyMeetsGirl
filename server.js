@@ -1,4 +1,4 @@
-var ACCESS_ID, FACEBOOK_URL, PORT, SESSION_ID, URL, USER, USER_AGENT, app, buildMemberMap, buildVisitMap, cheerio, db, express, findMemberByEmail, fql, getAllMembers, getAllVisits, getFIDs, getRecentVisits, http, insertUser, memberMap, moment, mongoose, recentVisits, request, visitMap;
+var ACCESS_ID, FACEBOOK_URL, PORT, SESSION_ID, URL, USER, USER_AGENT, app, buildMemberMap, buildVisitMap, cheerio, db, express, filterMostRecentVisit, findMemberByEmail, fql, getAllMembers, getAllRecentVisits, getAllVisits, getFIDs, getRecentVisitByMember, http, insertUser, memberMap, moment, mongoose, recentVisits, request, visitMap;
 
 FACEBOOK_URL = "https://www.facebook.com/";
 
@@ -59,6 +59,9 @@ db.on('open', function() {
   userSchema = mongoose.Schema({
     user_id: String,
     fid: String,
+    pic: String,
+    firstname: String,
+    lastname: String,
     pages: [
       {
         page_id: Number,
@@ -69,9 +72,9 @@ db.on('open', function() {
     ]
   });
   User = mongoose.model('User', userSchema);
-  getFIDs = function(ids) {
+  getFIDs = function(ids, callback) {
     var fids;
-    fids = [];
+    fids = {};
     return User.find({}, function(error, users) {
       var id, user, _i, _j, _len, _len1;
       for (_i = 0, _len = users.length; _i < _len; _i++) {
@@ -79,11 +82,11 @@ db.on('open', function() {
         for (_j = 0, _len1 = ids.length; _j < _len1; _j++) {
           id = ids[_j];
           if (id === user.user_id) {
-            fids.push(id);
+            fids[user.user_id] = user;
           }
         }
       }
-      return console.log(fids);
+      return typeof callback === "function" ? callback(fids) : void 0;
     });
   };
   return insertUser = function(userData, callback) {
@@ -192,15 +195,40 @@ buildVisitMap = function(visits) {
 };
 
 getAllVisits = function(callback) {
-  var entityType, url;
-  entityType = "com.braintribe.model.club.Visit";
-  url = "" + URL + "/entity?accessId=" + ACCESS_ID + "&entityType=" + entityType + "&accessKind=query&sessionId=" + SESSION_ID;
-  return request({
-    url: url
-  }, function(error, response, body) {
-    visitMap = buildVisitMap(JSON.parse(body));
-    buildMemberMapByVisits(visitMap);
-    return typeof callback === "function" ? callback(visitMap) : void 0;
+  return getAllMembers(function(members) {
+    var eMails, id, member;
+    eMails = (function() {
+      var _results;
+      _results = [];
+      for (id in members) {
+        member = members[id];
+        _results.push(member.eMail);
+      }
+      return _results;
+    })();
+    return getFIDs(eMails, function(users) {
+      var ids, user, user_id;
+      members = [];
+      ids = [];
+      for (user_id in users) {
+        user = users[user_id];
+        member = findMemberByEmail(user_id);
+        ids.push(member.id.value);
+      }
+      console.log(ids);
+      return getAllRecentVisits(ids, function(visits) {
+        var visit, _memberId;
+        for (_memberId in visits) {
+          visit = visits[_memberId];
+          member = memberMap[_memberId];
+          member.checkinTime = moment(visit.checkinTime.value, 'YYYY.MM.DD HH:mm:ss').unix();
+          member.facebook_object = users[member.eMail];
+          member.id = member.id.value;
+          members.push(member);
+        }
+        return typeof callback === "function" ? callback(members) : void 0;
+      });
+    });
   });
 };
 
@@ -216,37 +244,6 @@ getAllMembers = function(callback) {
   });
 };
 
-getRecentVisits = function(visits) {
-  var id, member, oldTimeStamp, timestamp, visit, _ref;
-  recentVisits = {};
-  for (id in visits) {
-    visit = visits[id];
-    if (visit.member == null) {
-      continue;
-    }
-    member = null;
-    if (visit.member.id != null) {
-      member = visit.member;
-    }
-    if (visit.member._ref != null) {
-      member = memberRef[visit.member._ref];
-    }
-    if (((_ref = visit.checkinTime) != null ? _ref.value : void 0) != null) {
-      timestamp = moment(visit.checkinTime.value, 'YYYY.MM.DD HH:mm:ss').unix();
-      if (recentVisits[member.id.value] == null) {
-        recentVisits[member.id.value] = visit;
-      }
-      oldTimeStamp = moment(recentVisits[member.id.value], 'YYYY.MM.DD HH:mm:ss').unix();
-      if (oldTimeStamp <= timestamp) {
-        visit.timestamp = timestamp;
-        visit.eMail = member.eMail;
-        recentVisits[member.id.value] = visit;
-      }
-    }
-  }
-  return recentVisits;
-};
-
 findMemberByEmail = function(email) {
   var id, member;
   for (id in memberMap) {
@@ -256,6 +253,47 @@ findMemberByEmail = function(email) {
     }
   }
   return null;
+};
+
+filterMostRecentVisit = function(visits) {
+  return visits[0];
+};
+
+getRecentVisitByMember = function(memberId, callback) {
+  var entityType, url;
+  entityType = "com.braintribe.model.club.Member";
+  url = "" + URL + "/entity?accessId=" + ACCESS_ID + "&entityType=" + entityType + "&accessKind=query&queryType=byId&id=" + memberId + "&sessionId=" + SESSION_ID;
+  return request({
+    url: url
+  }, function(error, reponse, body) {
+    var member, _ref;
+    member = JSON.parse(body);
+    if (member != null ? (_ref = member.visits) != null ? _ref.value : void 0 : void 0) {
+      return typeof callback === "function" ? callback(member.visits.value) : void 0;
+    } else {
+      return typeof callback === "function" ? callback(null) : void 0;
+    }
+  });
+};
+
+getAllRecentVisits = function(memberIds, callback) {
+  var visits, _handleNextMember;
+  visits = {};
+  _handleNextMember = function(memberId, callback) {
+    if (memberId == null) {
+      if (typeof callback === "function") {
+        callback(visits);
+      }
+      return;
+    }
+    return getRecentVisitByMember(memberId, function(_visits) {
+      if (_visits != null) {
+        visits[memberId] = filterMostRecentVisit(_visits);
+      }
+      return _handleNextMember(memberIds.pop(), callback);
+    });
+  };
+  return _handleNextMember(memberIds.pop(), callback);
 };
 
 app.get('/', function(req, res) {
@@ -321,7 +359,8 @@ app.get('/visits', function(req, res) {
 });
 
 app.get('/checkin/:email/:fid', function(req, res) {
-  var data, url;
+  var data, member, url;
+  member = findMemberByEmail(req.params.email);
   data = {
     _type: "com.braintribe.model.club.Visit",
     checkinTime: {
@@ -330,7 +369,7 @@ app.get('/checkin/:email/:fid', function(req, res) {
     },
     member: {
       _type: "com.braintribe.model.club.Member",
-      id: findMemberByEmail(req.params.email).id.value
+      id: member.id.value
     }
   };
   url = "" + URL + "/entity?accessId=" + ACCESS_ID + "&accessKind=create&data=" + (JSON.stringify(data)) + "&sessionId=" + SESSION_ID;
@@ -346,7 +385,7 @@ app.get('/checkin/:email/:fid', function(req, res) {
         "user-agent": USER_AGENT
       }
     }, function(error, _respone, body) {
-      var $, contents, names, namesStr;
+      var $, contents, names, namesStr, pic;
       if (error != null) {
         console.error(error);
         return;
@@ -354,17 +393,20 @@ app.get('/checkin/:email/:fid', function(req, res) {
       $ = cheerio.load(body);
       contents = $(".hidden_elem").contents();
       names = [];
+      pic = '';
       contents.each(function(index, element) {
-        var idName, link, links, _i, _len, _results;
+        var idName, link, links, profilePic, _i, _len;
         links = $(element.data).find(".profileInfoSection a[href!='#']");
-        _results = [];
         for (_i = 0, _len = links.length; _i < _len; _i++) {
           link = links[_i];
           url = $(link).attr('href');
           idName = url.substr(url.lastIndexOf('/') + 1);
-          _results.push(names.push("'" + idName + "'"));
+          names.push("'" + idName + "'");
         }
-        return _results;
+        profilePic = $(element.data).find("img.profilePic");
+        if (profilePic.length > 0) {
+          return pic = $(profilePic[0]).attr('src');
+        }
       });
       namesStr = names.join(',');
       return fql.query("SELECT page_id, pic, name, categories FROM page WHERE username IN (" + namesStr + ") OR page_id IN (" + namesStr + ")", function(error, pages) {
@@ -389,7 +431,11 @@ app.get('/checkin/:email/:fid', function(req, res) {
         return insertUser({
           user_id: req.params.email,
           fid: req.params.fid,
-          pages: pages
+          pic: pic,
+          firstname: member.foreName,
+          lastname: member.surName,
+          pages: pages,
+          photos: parseInt(Math.random() * 100)
         }, function() {
           return res.send(pages);
         });
@@ -400,4 +446,4 @@ app.get('/checkin/:email/:fid', function(req, res) {
 
 app.listen(PORT);
 
-getAllMembers(function(members) {});
+getAllMembers();

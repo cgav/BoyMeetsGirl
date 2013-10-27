@@ -12,7 +12,7 @@ Ext.define 'BoyMeetsGirl.controller.Wanted',
 		control:
 			wantedList:
 				itemtap: (sender, index, target, record) ->
-					this.getApplication().getController('Find').show()
+					this.getApplication().getController('Find').show('left', record)
 
 			backButton:
 				tap: (sender) ->

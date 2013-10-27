@@ -7,7 +7,10 @@ Ext.define('BoyMeetsGirl.controller.Find', {
         xtype: 'find',
         autoCreate: true
       },
-      backButton: 'find #backButton'
+      backButton: 'find #backButton',
+      image: 'find #image',
+      description: 'find #description',
+      qr: 'find #qr'
     },
     control: {
       backButton: {
@@ -17,13 +20,21 @@ Ext.define('BoyMeetsGirl.controller.Find', {
       }
     }
   },
-  show: function(direction) {
+  show: function(direction, record) {
     if (direction == null) {
       direction = 'left';
     }
-    return Ext.Viewport.animateActiveItem(this.getView(), {
+    if (record == null) {
+      record = null;
+    }
+    Ext.Viewport.animateActiveItem(this.getView(), {
       type: 'slide',
       direction: direction
     });
+    if (record != null) {
+      this.getImage().setSrc(record.raw.pic);
+      this.getDescription().setHtml("Meet <b>" + record.raw.name + "</b> at the bar in the Lounge and claim your free drink.");
+      return this.getQr().setSrc('https://chart.googleapis.com/chart?cht=qr&chs=160x160&chl=' + record.raw.qr);
+    }
   }
 });

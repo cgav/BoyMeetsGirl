@@ -32,10 +32,12 @@ Ext.define 'BoyMeetsGirl.view.Find',
 				cls: 'header'
 				items: [{
 					xtype: 'image'
+					itemId: 'image'
 					src: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
 					cls: 'profile-pic'
 				}, {
 					xtype: 'component'
+					itemId: 'description'
 					cls: 'description'
 					html: 'Meet <b>Julia N.</b> at the bar in the Lounge and claim your free drink.'
 				}]
@@ -43,7 +45,8 @@ Ext.define 'BoyMeetsGirl.view.Find',
 				xtype: 'container'
 				cls: 'qr-wrapper'
 				items: [{
-					xtype: 'component',
+					xtype: 'image'
+					itemId: 'qr'
 					cls: 'qr'
 				}]
 			}]

@@ -51,14 +51,13 @@ Ext.define 'BoyMeetsGirl.view.Wanted',
 					</div>
 				"
 				data: [{
-					pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
-					name: 'Julia N.'
+					pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.180.180/s160x160/1379474_10152281554223765_259450346_a.jpg'
+					name: 'Heidi B.'
+					qr: parseInt(Math.random() * 1000000)
 				}, {
-					pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
-					name: 'Julia N.'
-				}, {
-					pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/c0.0.628.628/s320x320/1379474_10152281554223765_259450346_n.jpg'
-					name: 'Julia N.'
+					pic: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash4/c44.45.551.551/s160x160/1001802_10201074269431330_545721157_n.jpg'
+					name: 'Susanna N.'
+					qr: parseInt(Math.random() * 1000000)
 				}]
 			}]
 		}]

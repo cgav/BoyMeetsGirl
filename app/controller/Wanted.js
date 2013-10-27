@@ -13,7 +13,7 @@ Ext.define('BoyMeetsGirl.controller.Wanted', {
     control: {
       wantedList: {
         itemtap: function(sender, index, target, record) {
-          return this.getApplication().getController('Find').show();
+          return this.getApplication().getController('Find').show('left', record);
         }
       },
       backButton: {
