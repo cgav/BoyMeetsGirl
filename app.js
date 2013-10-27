@@ -69,7 +69,7 @@ Ext.application({
 
         // Initialize the main view
         BoyMeetsGirl.util.TribefireManager.initialize(function () {
-            Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.SignIn'));
+            Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.Home'));
         });
     },
 

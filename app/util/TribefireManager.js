@@ -57,10 +57,7 @@ Ext.define('BoyMeetsGirl.util.TribefireManager', {
       if (response.authResponse) {
         return FB.api('/me', function(response) {
           _this.data.fid = response.username;
-          return _this.checkIn(_this.data.userEmail, _this.data.fid, function(_response) {
-            console.log(_response);
-            return typeof callback === "function" ? callback(response.username) : void 0;
-          });
+          return typeof callback === "function" ? callback(response.username) : void 0;
         });
       } else {
         return typeof callback === "function" ? callback(null) : void 0;
