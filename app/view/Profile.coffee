@@ -16,6 +16,7 @@ Ext.define 'BoyMeetsGirl.view.Profile',
 			layout: 'hbox'
 			items: [{
 				xtype: 'button'
+				itemId: 'backButton'
 				baseCls: 'toolbar-button icon back'
 			}, {
 				xtype: 'component'

@@ -17,6 +17,17 @@ Ext.application({
         'Ext.MessageBox'
     ],
 
+    controllers: [
+        'SignIn',
+        'SignUp',
+        'FacebookConnect',
+        'Home',
+        'PersonList',
+        'Wanted',
+        'Find',
+        'Profile'
+    ],
+
     views: [
         'Splash',
         'SignIn',
@@ -48,20 +59,11 @@ Ext.application({
     },
 
     launch: function() {
-        // // Destroy the #appLoadingIndicator element
+        // Destroy the #appLoadingIndicator element
         Ext.fly('appLoadingIndicator').destroy();
 
-        // // Initialize the main view
-        Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.Find'));
-
-        // Ext.create('Ext.Panel', {
-        //     fullscreen : true,
-        //     html : 'This is my main app'
-        // });
-
-        // var splash = Ext.create('BoyMeetsGirl.view.Splash');
-        // splash.show();
-        // Ext.defer(function() { splash.destroy(); }, 5000);
+        // Initialize the main view
+        Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.SignIn'));
     },
 
     onUpdated: function() {

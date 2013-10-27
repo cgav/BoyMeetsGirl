@@ -45,10 +45,12 @@ Ext.define 'BoyMeetsGirl.view.SignIn',
 			}, {
 				xtype: 'button'
 				baseCls: 'button'
+				itemId: 'signInButton'
 				text: 'Sign in'
 			}, {
 				xtype: 'component'
 				cls: 'footer'
-				html: 'No account yet? <a href="#" class="createAccount">Create one here</a>.'
+				itemId: 'footer'
+				html: 'No account yet? <a href="#signup" class="createAccount">Create one here</a>.'
 			}]
 		}]

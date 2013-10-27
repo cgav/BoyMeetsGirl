@@ -16,6 +16,7 @@ Ext.define 'BoyMeetsGirl.view.Wanted',
 			layout: 'hbox'
 			items: [{
 				xtype: 'button'
+				itemId: 'backButton'
 				baseCls: 'toolbar-button icon back'
 			}, {
 				xtype: 'component'
@@ -30,6 +31,7 @@ Ext.define 'BoyMeetsGirl.view.Wanted',
 			flex: 1
 			items: [{
 				xtype: 'list'
+				itemId: 'wantedList'
 				flex: 1
 				pressedCls: 'item-tapped'
 				selectedCls: 'item-tapped'

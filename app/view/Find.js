@@ -14,6 +14,7 @@ Ext.define('BoyMeetsGirl.view.Find', {
         items: [
           {
             xtype: 'button',
+            itemId: 'backButton',
             baseCls: 'toolbar-button icon back'
           }, {
             xtype: 'component',

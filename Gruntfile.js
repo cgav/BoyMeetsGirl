@@ -39,7 +39,7 @@ module.exports = function(grunt) {
     watch: {
       coffee: {
         files: ["app/**/*.coffee", "server.coffee"],
-        tasks: ["coffee", "notify"],
+        tasks: ["coffee"],
         optinos: {
           nospawn: true
         }

@@ -18,11 +18,13 @@ Ext.define 'BoyMeetsGirl.view.Home',
 				cls: 'stats'
 			},{
 				xtype: 'button'
-				baseCls: 'button red icon'
+				itemId: 'wantedButton'
+				baseCls: 'button red with-icon'
 				text: '<span class="icon heart"></span> <span class="label">See who wants to meet you!</span>'
 			}, {
 				xtype: 'button'
-				baseCls: 'button orange icon'
+				itemId: 'personListButton'
+				baseCls: 'button orange with-icon'
 				text: '<span class="icon eye"></span> <span class="label">Find the girls in this club!</span>'
 			}]
 		}]

@@ -14,6 +14,7 @@ Ext.define('BoyMeetsGirl.view.PersonList', {
         items: [
           {
             xtype: 'button',
+            itemId: 'backButton',
             baseCls: 'toolbar-button icon back'
           }, {
             xtype: 'component',
@@ -30,6 +31,7 @@ Ext.define('BoyMeetsGirl.view.PersonList', {
         items: [
           {
             xtype: 'list',
+            itemId: 'personList',
             flex: 1,
             pressedCls: 'item-tapped',
             selectedCls: 'item-tapped',

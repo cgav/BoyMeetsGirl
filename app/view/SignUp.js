@@ -53,6 +53,7 @@ Ext.define('BoyMeetsGirl.view.SignUp', {
             ]
           }, {
             xtype: 'button',
+            itemId: 'signUpButton',
             baseCls: 'button',
             text: 'Sign up'
           }
