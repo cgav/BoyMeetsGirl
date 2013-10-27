@@ -6,14 +6,25 @@
 //
 
 $default-font-size: 32px;
-$base-color: #3498DB;
+$default-font-color: #333;
+$base-color: #3498db;
 $base-pressed-color: #2980b9;
 $border-color: #95a5a6;
+
+$red: #e74c3c;
+$dark-red: #c0392b;
+
+$orange: #e67e22;
+$dark-orange: #d35400;
+
+$grey: #95a5a6;
+$dark-grey: #7f8c8d;
 
 body {
 	font-family: 'Yanone Kaffeesatz', sans-serif;
 	font-weight: 100;
 	font-size: $default-font-size !important;
+	color: $default-font-color;
 }
 
 a {
@@ -58,6 +69,52 @@ b {
 	&.x-button-pressing {
 		background-color: $base-pressed-color;
 	}
+
+	&.icon {
+		font-size: $default-font-size - 10;
+
+		.x-button-label {
+			padding: 10px 0 11px 0;
+			text-align: left;
+
+			.label {
+				padding-top: 5px;
+			}
+		}
+
+		.icon {
+			margin: 0 10px 0 10px;
+			vertical-align: middle;
+			background-size: 24px 24px;
+			display: inline-block;
+			width: 24px;
+			height: 24px;
+
+			&.heart {
+				background-image: url(../images/icons/heart.png);
+			}
+
+			&.eye {
+				background-image: url(../images/icons/eye.png);
+			}
+		}
+	}
+
+	&.red {
+		background-color: $red;
+
+		&.x-button-pressing {
+			background-color: $dark-red;
+		}
+	}
+
+	&.orange {
+		background-color: $orange;
+
+		&.x-button-pressing {
+			background-color: $dark-orange;
+		}
+	}
 }
 	
 .title-toolbar {
@@ -68,7 +125,41 @@ b {
 	text-align: center;
 	height: 50px;
 	padding-top: 9px;
-	margin-bottom: 10px;
+
+	.label {
+		width: 100%;
+	}
+
+	.toolbar-button {
+		margin: 5px 0 0 10px;
+	}
+}
+
+.icon {
+	background-size: 24px 24px;
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+
+	&.heart-red {
+		background-image: url(../images/icons/heart-red.png);
+	}
+
+	&.cam-grey {
+		background-image: url(../images/icons/cam-grey.png);
+	}
+
+	&.checked-green {
+		background-image: url(../images/icons/checked-green.png);
+	}
+
+	&.back {
+		background-image: url(../images/icons/back.png);
+	}
+}
+
+.hidden {
+	display: none;
 }
 
 // --------------------------------------------------------
@@ -175,3 +266,128 @@ b {
 		}
 	}
 }
+
+// --------------------------------------------------------
+// Facebook Connect
+//
+.facebook-connect {
+	background-color: #fff;
+
+	.content {
+		@include padded-view();
+
+		.header {
+			margin-bottom: 20px;
+
+			.chaya-logo {
+				background-image: url(../images/cf-logo.png);
+				background-size: 70px 70px;
+				height: 70px;
+				width: 70px;
+				margin-right: 10px;
+			}
+
+			.arrow {
+				background-image: url(../images/arrow.png);
+				background-size: 62px 17px;
+				width: 62px;
+				height: 17px;
+				margin-right: 10px;
+			}
+
+			.facebook-logo {
+				background-image: url(../images/facebook-logo.png);
+				background-size: 70px 70px;
+				height: 70px;
+				width: 70px;
+				margin-right: 20px;
+			}
+		}
+
+		.description {
+			font-size: $default-font-size - 8;
+			text-align: center;
+			margin-bottom: 40px;
+		}
+	}
+}
+
+// --------------------------------------------------------
+// Home
+//
+.home {
+	background-color: #fff;
+
+	.content {
+		@include padded-view();
+
+		.stats {
+			background-image: url(../images/stats.png);
+			background-size: 180px 180px;
+			height: 180px;
+			width: 180px;
+			margin: 0 auto 20px auto;
+		}
+	}
+}
+
+// --------------------------------------------------------
+// Person List
+//
+.person-list {
+	background-color: #fff;
+
+	.content {
+		@include padded-view();
+
+		.item {
+			height: 100px;
+
+			.pic {
+				float: left;
+				margin-right: 20px;
+
+				img {
+					-webkit-mask-image: url(../images/pic-mask.png);
+					width: 100px;
+					height: 100px;
+				}
+			}
+
+			.description {
+				.seen {
+					font-size: $default-font-size - 16px;
+					color: $grey;
+					margin-bottom: 10px;
+				}
+
+				.icons {
+					.set {
+						float: left;
+						margin-right: 20px;
+					}
+				}
+			}
+		}
+
+		.item-tapped, .item-selected {
+			background-color: #eee;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

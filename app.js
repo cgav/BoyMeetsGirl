@@ -21,6 +21,9 @@ Ext.application({
         'Splash',
         'SignIn',
         'SignUp',
+        'FacebookConnect',
+        'Home',
+        'PersonList'
     ],
 
     icon: {
@@ -46,7 +49,7 @@ Ext.application({
         Ext.fly('appLoadingIndicator').destroy();
 
         // // Initialize the main view
-        Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.SignUp'));
+        Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.PersonList'));
 
         // Ext.create('Ext.Panel', {
         //     fullscreen : true,
