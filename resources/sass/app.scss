@@ -177,6 +177,15 @@ b {
 	display: none;
 }
 
+.error {
+	font-size: $default-font-size - 12;
+	font-weight: 400;
+	color: $red;
+	border: 1px solid $red;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+
 // --------------------------------------------------------
 // Splash
 //

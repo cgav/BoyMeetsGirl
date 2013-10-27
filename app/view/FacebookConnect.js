@@ -38,6 +38,12 @@ Ext.define('BoyMeetsGirl.view.FacebookConnect', {
             cls: 'description',
             html: 'Connect to Facebook to retrieve your interests and photos.'
           }, {
+            xtype: 'panel',
+            itemId: 'errorPanel',
+            cls: 'error',
+            html: 'Cannot connect to Facebook.',
+            hidden: true
+          }, {
             xtype: 'button',
             itemId: 'connectButton',
             baseCls: 'button',

@@ -1,4 +1,4 @@
-var ACCESS_ID, FACEBOOK_URL, PORT, SESSION_ID, URL, USER, USER_AGENT, app, buildMemberMap, buildVisitMap, cheerio, db, express, findMemberByEmail, fql, getAllMembers, getAllVisits, http, insertUser, memberMap, mongoose, request, strftime, visitMap;
+var ACCESS_ID, FACEBOOK_URL, PORT, SESSION_ID, URL, USER, USER_AGENT, app, buildMemberMap, buildVisitMap, cheerio, db, express, findMemberByEmail, fql, getAllMembers, getAllVisits, getFIDs, getRecentVisits, http, insertUser, memberMap, moment, mongoose, recentVisits, request, visitMap;
 
 FACEBOOK_URL = "https://www.facebook.com/";
 
@@ -24,13 +24,15 @@ express = require('express');
 
 mongoose = require('mongoose');
 
-strftime = require('strftime');
+moment = require('moment');
 
 SESSION_ID = '13102705041166251630df196a1e1c5f';
 
 memberMap = {};
 
 visitMap = {};
+
+recentVisits = {};
 
 app = express();
 
@@ -44,6 +46,8 @@ db = mongoose.connection;
 
 insertUser = null;
 
+getFIDs = null;
+
 db.on('error', function(err) {
   if (typeof error !== "undefined" && error !== null) {
     console.error(error);
@@ -51,7 +55,7 @@ db.on('error', function(err) {
 });
 
 db.on('open', function() {
-  var userSchema;
+  var User, userSchema;
   userSchema = mongoose.Schema({
     user_id: String,
     fid: String,
@@ -64,9 +68,25 @@ db.on('open', function() {
       }
     ]
   });
+  User = mongoose.model('User', userSchema);
+  getFIDs = function(ids) {
+    var fids;
+    fids = [];
+    return User.find({}, function(error, users) {
+      var id, user, _i, _j, _len, _len1;
+      for (_i = 0, _len = users.length; _i < _len; _i++) {
+        user = users[_i];
+        for (_j = 0, _len1 = ids.length; _j < _len1; _j++) {
+          id = ids[_j];
+          if (id === user.user_id) {
+            fids.push(id);
+          }
+        }
+      }
+      return console.log(fids);
+    });
+  };
   return insertUser = function(userData, callback) {
-    var User;
-    User = mongoose.model('User', userSchema);
     return User.findOne({
       user_id: userData.user_id
     }, function(error, user) {
@@ -179,6 +199,7 @@ getAllVisits = function(callback) {
     url: url
   }, function(error, response, body) {
     visitMap = buildVisitMap(JSON.parse(body));
+    buildMemberMapByVisits(visitMap);
     return typeof callback === "function" ? callback(visitMap) : void 0;
   });
 };
@@ -193,6 +214,37 @@ getAllMembers = function(callback) {
     memberMap = buildMemberMap(JSON.parse(body));
     return typeof callback === "function" ? callback(memberMap) : void 0;
   });
+};
+
+getRecentVisits = function(visits) {
+  var id, member, oldTimeStamp, timestamp, visit, _ref;
+  recentVisits = {};
+  for (id in visits) {
+    visit = visits[id];
+    if (visit.member == null) {
+      continue;
+    }
+    member = null;
+    if (visit.member.id != null) {
+      member = visit.member;
+    }
+    if (visit.member._ref != null) {
+      member = memberRef[visit.member._ref];
+    }
+    if (((_ref = visit.checkinTime) != null ? _ref.value : void 0) != null) {
+      timestamp = moment(visit.checkinTime.value, 'YYYY.MM.DD HH:mm:ss').unix();
+      if (recentVisits[member.id.value] == null) {
+        recentVisits[member.id.value] = visit;
+      }
+      oldTimeStamp = moment(recentVisits[member.id.value], 'YYYY.MM.DD HH:mm:ss').unix();
+      if (oldTimeStamp <= timestamp) {
+        visit.timestamp = timestamp;
+        visit.eMail = member.eMail;
+        recentVisits[member.id.value] = visit;
+      }
+    }
+  }
+  return recentVisits;
 };
 
 findMemberByEmail = function(email) {
@@ -253,7 +305,12 @@ app.get('/signup/:firstname/:lastname/:email/:password', function(req, res) {
   }, function(error, response, body) {
     var id;
     id = JSON.parse(body)[0];
-    return res.send(id);
+    console.log("Member signed up with ID " + id);
+    return getAllMembers(function(members) {
+      return res.send({
+        id: id
+      });
+    });
   });
 });
 
@@ -269,7 +326,7 @@ app.get('/checkin/:email/:fid', function(req, res) {
     _type: "com.braintribe.model.club.Visit",
     checkinTime: {
       _type: "date",
-      value: strftime('%Y.%m.%d %T')
+      value: moment().format('YYYY.MM.DD HH:mm:ss')
     },
     member: {
       _type: "com.braintribe.model.club.Member",
@@ -343,6 +400,4 @@ app.get('/checkin/:email/:fid', function(req, res) {
 
 app.listen(PORT);
 
-getAllVisits();
-
-getAllMembers();
+getAllMembers(function(members) {});

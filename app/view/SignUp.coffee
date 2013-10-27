@@ -38,15 +38,19 @@ Ext.define 'BoyMeetsGirl.view.SignUp',
 				cls: 'body'
 				items: [{
 					xtype: 'textfield'
+					itemId: 'firstnameText'
 					placeHolder: 'Firstname'
 				}, {
 					xtype: 'textfield'
+					itemId: 'lastnameText'
 					placeHolder: 'Lastname'
 				}, {
 					xtype: 'textfield'
+					itemId: 'emailText'
 					placeHolder: 'Email address'
 				}, {
 					xtype: 'passwordfield'
+					itemId: 'passwordText'
 					placeHolder: 'Password'
 				}]
 			}, {

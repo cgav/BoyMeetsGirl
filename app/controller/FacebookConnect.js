@@ -7,13 +7,12 @@ Ext.define('BoyMeetsGirl.controller.FacebookConnect', {
         xtype: 'facebookconnect',
         autoCreate: true
       },
-      connectButton: 'facebookconnect #connectButton'
+      connectButton: 'facebookconnect #connectButton',
+      errorPanel: 'facebookconnect #errorPanel'
     },
     control: {
       connectButton: {
-        tap: function(sender) {
-          return this.getApplication().getController('Home').show();
-        }
+        tap: 'connectFacebook'
       }
     }
   },
@@ -24,6 +23,18 @@ Ext.define('BoyMeetsGirl.controller.FacebookConnect', {
     return Ext.Viewport.animateActiveItem(this.getView(), {
       type: 'slide',
       direction: direction
+    });
+  },
+  connectFacebook: function(sender) {
+    var _this = this;
+    this.getErrorPanel().setHidden(true);
+    return BoyMeetsGirl.util.TribefireManager.connectFacebook(function(fid) {
+      if (fid != null) {
+        console.log("User's facebook ID is " + fid);
+        return _this.getApplication().getController('Home').show();
+      } else {
+        return _this.getErrorPanel().setHidden(false);
+      }
     });
   }
 });

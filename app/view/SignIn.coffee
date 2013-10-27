@@ -33,13 +33,21 @@ Ext.define 'BoyMeetsGirl.view.SignIn',
 					html: 'Sign in with your<br><b>Chaya Fuera</b> account'
 				}]
 			}, {
+				xtype: 'panel'
+				itemId: 'errorPanel'
+				cls: 'error'
+				html: 'Email and/or password is wrong.'
+				hidden: true
+			}, {
 				xtype: 'container'
 				cls: 'body'
 				items: [{
 					xtype: 'textfield'
+					itemId: 'emailText'
 					placeHolder: 'Email address'
 				}, {
 					xtype: 'passwordfield'
+					itemId: 'passwordText'
 					placeHolder: 'Password'
 				}]
 			}, {
