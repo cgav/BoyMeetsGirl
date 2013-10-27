@@ -14,7 +14,8 @@ Ext.application({
     name: 'BoyMeetsGirl',
 
     requires: [
-        'Ext.MessageBox'
+        'Ext.MessageBox',
+        'BoyMeetsGirl.util.TribefireManager'
     ],
 
     controllers: [
@@ -63,7 +64,9 @@ Ext.application({
         Ext.fly('appLoadingIndicator').destroy();
 
         // Initialize the main view
-        Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.SignIn'));
+        BoyMeetsGirl.util.TribefireManager.initialize(function () {
+            Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.SignIn'));
+        });
     },
 
     onUpdated: function() {
