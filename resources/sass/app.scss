@@ -20,6 +20,9 @@ $dark-orange: #d35400;
 $grey: #95a5a6;
 $dark-grey: #7f8c8d;
 
+$clouds: #ecf0f1;
+$dark-clouds: #bdc3c7;
+
 body {
 	font-family: 'Yanone Kaffeesatz', sans-serif;
 	font-weight: 100;
@@ -59,8 +62,10 @@ b {
 	height: 45px;
 	font-size: $default-font-size - 8;
 	margin-bottom: 10px;
+	border: none;
 
 	.x-button-label {
+		font-family: 'Yanone Kaffeesatz', sans-serif;
 		color: #fff;
 		font-weight: 400;
 		padding: 8px 0 9px 0;
@@ -113,6 +118,16 @@ b {
 
 		&.x-button-pressing {
 			background-color: $dark-orange;
+		}
+	}
+
+	&.inline-button {
+		height: 35px;
+		padding-left: 10px;
+		padding-right: 10px;
+
+		.x-button-label {
+			font-size: $default-font-size - 14;
 		}
 	}
 }
@@ -376,8 +391,170 @@ b {
 	}
 }
 
+// --------------------------------------------------------
+// Profile
+//
+.profile {
+	background-color: #fff;
 
+	.content {
+		.header {
+			@include padded-view();
 
+			.profile-pic {
+				-webkit-mask-image: url(../images/pic-mask.png);
+				width: 100px;
+				height: 100px;
+				margin-right: 20px;
+			}
+
+			.name {
+				font-size: $default-font-size - 8;
+			}
+
+			.seen {
+				font-size: $default-font-size - 16;
+				color: $grey;
+				margin-bottom: 10px;
+			}
+		}
+
+		.links {
+			border-top: 1px solid $dark-clouds;
+
+			.profile-button {
+				background-color: $clouds;
+				font-size: $default-font-size - 12;
+				width: 50%;
+				padding: 5px 10px;
+
+				.x-button-label {
+					font-weight: 100;
+				}
+
+				.icon {
+					float: left;
+					margin: 10px 15px 10px 10px;
+				}
+
+				.label {
+					text-align: left;
+					display: inline-block;
+					width: 80px;
+					float: left;
+				}
+
+				&.x-button-pressing, &.active {
+					background-color: $dark-clouds;
+				}
+			}
+		}
+
+		.pages-list {
+			.item {
+				height: 80px;
+
+				.pic {
+					float: left;
+					margin-right: 20px;
+			
+					img {
+						width: 80px;
+						height: 80px;
+					}
+				}
+
+				.name {
+
+				}
+
+				.category {
+					font-size: $default-font-size - 16;
+					color: $grey;
+				}
+			}
+
+			.item-tapped, .item-selected {
+				background-color: #eee;
+			}
+		}
+	}
+}
+
+// --------------------------------------------------------
+// Wanted
+//
+.wanted {
+	background-color: #fff;
+
+	.content {
+		.item {
+			height: 100px;
+
+			.pic {
+				float: left;
+				margin-right: 20px;
+
+				img {
+					-webkit-mask-image: url(../images/pic-mask.png);
+					width: 100px;
+					height: 100px;
+				}
+			}
+
+			.description {
+				.name {
+					margin-bottom: 10px;
+				}
+			}
+		}
+
+		.item-tapped, .item-selected {
+			background-color: #eee;
+		}
+	}
+}
+
+// --------------------------------------------------------
+// find
+//
+.find {
+	background-color: #fff;
+
+	.content {
+		@include padded-view();
+
+		.header {
+
+			margin-bottom: 20px;
+
+			.profile-pic {
+				-webkit-mask-image: url(../images/pic-mask.png);
+				width: 100px;
+				height: 100px;
+				margin-right: 20px;
+			}
+
+			.description {
+				font-size: $default-font-size - 8;
+				width: 55%;
+			}
+		}
+
+		.qr-wrapper {
+			border-top: 1px solid $border-color;
+			padding: 20px;
+
+			.qr {
+				background-image: url(../images/sample-qr.png);
+				background-size: 160px 160px;
+				width: 160px;
+				height: 160px;
+				margin: 0 auto;
+			}
+		}
+	}
+}
 
 
 

@@ -23,7 +23,10 @@ Ext.application({
         'SignUp',
         'FacebookConnect',
         'Home',
-        'PersonList'
+        'PersonList',
+        'Profile',
+        'Wanted',
+        'Find'
     ],
 
     icon: {
@@ -49,7 +52,7 @@ Ext.application({
         Ext.fly('appLoadingIndicator').destroy();
 
         // // Initialize the main view
-        Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.PersonList'));
+        Ext.Viewport.add(Ext.create('BoyMeetsGirl.view.Find'));
 
         // Ext.create('Ext.Panel', {
         //     fullscreen : true,
